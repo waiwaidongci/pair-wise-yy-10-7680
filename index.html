@@ -15,17 +15,20 @@
       --red: #a43f42;
       --amber: #aa7a24;
       --violet: #665c93;
+      --green: #22603a;
     }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     header { padding: 22px 28px 16px; border-bottom: 1px solid var(--line); background: #fbfdfb; display: flex; justify-content: space-between; gap: 18px; align-items: end; }
     h1 { margin: 0; font-size: 26px; letter-spacing: 0; }
+    h2 .hint { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 8px; }
     .sub, .meta { color: var(--muted); font-size: 13px; line-height: 1.5; }
     main { padding: 20px 28px 34px; display: grid; gap: 18px; }
     button, input, select, textarea { font: inherit; border-radius: 6px; }
     input, select, textarea { width: 100%; border: 1px solid var(--line); padding: 9px 10px; background: #fff; color: var(--ink); }
     textarea { min-height: 68px; resize: vertical; }
     button { border: 0; background: var(--teal); color: #fff; padding: 9px 11px; cursor: pointer; min-height: 38px; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
     button.secondary { background: #5d6764; }
     button.warn { background: var(--amber); }
     button.danger { background: var(--red); }
@@ -37,12 +40,14 @@
     form { display: grid; gap: 10px; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .toolbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
-    .lists { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .lists { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
     .mini { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fbfdfb; min-height: 118px; }
     .mini h3 { margin: 0 0 8px; font-size: 14px; }
     .item { border: 1px solid #d7e0dc; border-left: 4px solid var(--teal); background: #fff; border-radius: 7px; padding: 9px; margin-bottom: 8px; cursor: pointer; }
-    .item.overdue { border-left-color: var(--red); }
-    .board { display: grid; grid-template-columns: repeat(4, minmax(185px, 1fr)); gap: 12px; overflow-x: auto; }
+    .item.overdue, .item.st-cure { border-left-color: var(--red); }
+    .item.st-inspect { border-left-color: var(--violet); }
+    .item.st-pickup { border-left-color: var(--teal); }
+    .board { display: grid; grid-template-columns: repeat(7, minmax(205px, 1fr)); gap: 12px; overflow-x: auto; }
     .col { background: #f9fbf9; border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 320px; }
     .col h3 { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 15px; }
     .actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
@@ -51,10 +56,30 @@
     dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
     .dialog-body { padding: 16px; display: grid; gap: 10px; }
     .empty { color: var(--muted); font-size: 13px; padding: 8px 0; }
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; }
+    .badge { font-size: 11px; line-height: 1.4; padding: 2px 8px; border-radius: 999px; background: #e7eeea; color: #43504b; border: 1px solid #d3ddd8; }
+    .badge.ok { background: #e3f2e8; color: var(--green); border-color: #bfe0cb; }
+    .badge.bad { background: #f8e6e6; color: #8f3538; border-color: #ecc7c7; }
+    .badge.solid { background: var(--violet); color: #fff; border-color: var(--violet); }
+    .meas { display: grid; gap: 4px; margin: 6px 0; font-size: 12px; }
+    .meas .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .pickup { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
+    .queue-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .cap { display: grid; gap: 10px; align-content: start; }
+    .capline { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+    .bar { height: 8px; background: #e3eae6; border-radius: 99px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--teal); transition: width .2s; }
+    .bar i.full { background: var(--red); }
+    .hist { list-style: none; margin: 8px 0 0; padding: 0; border-left: 2px solid var(--line); max-height: 220px; overflow: auto; }
+    .hist li { padding: 4px 0 4px 10px; font-size: 12px; color: var(--muted); }
+    .hist li b { color: var(--ink); font-weight: 600; }
+    .hist .snap { color: #8a6d1f; }
+    .warnbox { background: #faf3e2; border: 1px solid #e7d3a2; color: #7a5a17; border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.5; }
+    .infobox { background: #eef4f3; border: 1px solid #c9dbd8; color: #2c5b58; border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.5; }
     @media (max-width: 980px) {
       header { display: block; padding: 18px; }
       main { padding: 16px; }
-      .top, .lists, .toolbar { grid-template-columns: 1fr; }
+      .top, .lists, .toolbar, .pickup { grid-template-columns: 1fr; }
       .grid2 { grid-template-columns: 1fr; }
     }
   </style>
@@ -63,7 +88,7 @@
   <header>
     <div>
       <h1>小型漆线雕工坊管理</h1>
-      <div class="sub">贴线、阴干、上金粉、待交付的作品流转与缺陷追踪</div>
+      <div class="sub">入坊体检 · 领料台 · 贴线 / 阴干 / 上金粉 / 待交付流转与缺陷追踪</div>
     </div>
     <button id="exportBtn" class="secondary">导出 JSON</button>
   </header>
@@ -71,26 +96,33 @@
   <main>
     <section class="top">
       <form id="workForm" class="panel">
-        <h2>新增作品</h2>
+        <h2>入坊体检登记<span class="hint">客户寄回旧胎先检后领</span></h2>
         <div class="grid2">
-          <label>胎体材质<input name="base" required placeholder="脱胎漆器"></label>
-          <label>纹样主题<input name="theme" required placeholder="缠枝莲"></label>
+          <label>胎体材质<input name="base" required placeholder="脱胎捧盒"></label>
+          <label>纹样主题<input name="theme" required placeholder="海水江崖"></label>
         </div>
         <div class="grid2">
           <label>线条粗细<select name="line"><option>细线</option><option>中线</option><option>粗线</option><option>混合线</option></select></label>
-          <label>贴线进度<input name="progress" type="number" min="0" max="100" value="25"></label>
+          <label>来源<input name="source" required list="sourceList" placeholder="客户寄回·陈记古玩"></label>
+          <datalist id="sourceList">
+            <option value="客户寄回"></option>
+            <option value="门店收回"></option>
+            <option value="库存旧胎"></option>
+            <option value="客户自送"></option>
+          </datalist>
         </div>
         <div class="grid2">
-          <label>阴干日期<input name="dryDate" type="date" required></label>
-          <label>交付日期<input name="delivery" type="date" required></label>
+          <label>含水率（%）<input name="moisture" type="number" min="0" max="100" step="0.1" placeholder="如 10.5，留空待检"></label>
+          <label>壁厚差（mm）<input name="wallDiff" type="number" min="0" step="0.05" placeholder="如 0.8，留空待检"></label>
         </div>
         <div class="grid2">
-          <label>金粉处理状态<select name="gold"><option>未处理</option><option>试扫粉</option><option>已上金粉</option></select></label>
-          <label>当前状态<select name="status"><option>贴线中</option><option>待阴干</option><option>上金粉</option><option>待交付</option></select></label>
+          <label>裂纹数（条）<input name="cracks" type="number" min="0" step="1" placeholder="登记备查"></label>
+          <label>接收人<input name="receiver" required placeholder="王秀兰"></label>
         </div>
-        <label>缺陷位置<input name="defect" placeholder="右下花瓣断线"></label>
-        <label>备注<textarea name="note" placeholder="客户偏好、修补记录"></textarea></label>
-        <button type="submit">加入工坊</button>
+        <label>交付日期<input name="delivery" type="date" required></label>
+        <label>备注<textarea name="note" placeholder="客户偏好、旧胎来历、修补记录"></textarea></label>
+        <div class="infobox" id="gateHint"></div>
+        <button type="submit">登记并判超限</button>
       </form>
 
       <section class="panel">
@@ -99,6 +131,10 @@
           <div class="mini">
             <h3>今日待阴干</h3>
             <div id="todayDry"></div>
+          </div>
+          <div class="mini">
+            <h3>养护区卡点</h3>
+            <div id="cureList"></div>
           </div>
           <div class="mini">
             <h3>缺陷作品</h3>
@@ -118,6 +154,31 @@
         <div id="board" class="board"></div>
       </section>
     </section>
+
+    <section class="panel">
+      <h2>领料台<span class="hint">体检合格才排队；领料后占用贴线材料与工位，超限/待检作品不占资源</span></h2>
+      <div class="pickup">
+        <div>
+          <div class="meta" style="margin-bottom:6px;">待领队列（按重新排队时间先后）</div>
+          <div id="queueList"></div>
+        </div>
+        <div class="cap">
+          <div class="capline">
+            <span id="matCapText"></span>
+            <div class="bar"><i id="matBar"></i></div>
+          </div>
+          <div class="capline">
+            <span id="stCapText"></span>
+            <div class="bar"><i id="stBar"></i></div>
+          </div>
+          <div class="grid2">
+            <label>含水率上限（%）<input id="limMoisture" type="number" min="0" step="0.1"></label>
+            <label>壁厚差上限（mm）<input id="limWall" type="number" min="0" step="0.05"></label>
+          </div>
+          <div class="infobox">判超限只看<b>含水率、壁厚差两项</b>；裂纹数登记备查。领料后若体检值被更正，贴线进度与占用立即失效，作品退回待体检，旧值与原进度进入履历。</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <dialog id="detailDialog">
@@ -134,31 +195,216 @@
     </div>
   </dialog>
 
+  <dialog id="measureDialog">
+    <form class="dialog-body" id="measureForm" method="dialog">
+      <h2 id="measureTitle">体检</h2>
+      <div id="measureWarn"></div>
+      <div class="grid2">
+        <label>含水率（%）<input name="moisture" type="number" min="0" max="100" step="0.1" required></label>
+        <label>壁厚差（mm）<input name="wallDiff" type="number" min="0" step="0.05" required></label>
+      </div>
+      <div class="grid2">
+        <label>裂纹数（条）<input name="cracks" type="number" min="0" step="1" value="0" required></label>
+        <label id="operatorLabel"><span id="operatorText">接收人</span><input name="operator" required placeholder="姓名"></label>
+      </div>
+      <label id="reasonWrap" style="display:none;">更正理由（记入履历）<input name="reason" placeholder="如：初检仪器未校准"></label>
+      <label style="display:none;grid-template-columns:auto 1fr;align-items:center;gap:8px;color:var(--amber);">
+        <input type="checkbox" id="confirmInvalidate" style="width:auto;"> <span>我已知晓：领料后更正将使进度与占用失效并退回待体检</span>
+      </label>
+      <div class="actions">
+        <button id="measureSubmit" type="submit">提交</button>
+        <button type="button" class="secondary" id="measureCancel">取消</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
-    const statuses = ["贴线中", "待阴干", "上金粉", "待交付"];
+    // 看板列顺序即工艺流转顺序
+    const statuses = ["待体检", "待领料", "养护区", "贴线中", "待阴干", "上金粉", "待交付"];
     const storageKey = "zfl42Works";
+    const limitsKey = "zfl42Limits";
+    // 每份领料占用 1 份贴线材料 + 1 个工位
+    const MATERIAL_TOTAL = 12;
+    const STATION_TOTAL = 5;
     const today = new Date().toISOString().slice(0, 10);
-    const seed = [
-      { id: crypto.randomUUID(), base: "木胎香盒", theme: "海水江崖", line: "细线", progress: 70, dryDate: today, gold: "未处理", defect: "", delivery: "2026-06-26", status: "待阴干", note: "边线需保持低浮雕感", logs: ["创建作品"] },
-      { id: crypto.randomUUID(), base: "脱胎盘", theme: "折枝梅", line: "混合线", progress: 95, dryDate: "2026-06-20", gold: "试扫粉", defect: "左侧枝干翘线", delivery: "2026-06-23", status: "上金粉", note: "客户要求金粉偏暗", logs: ["创建作品", "记录翘线"] },
-      { id: crypto.randomUUID(), base: "竹胎笔筒", theme: "云雷纹", line: "中线", progress: 40, dryDate: "2026-06-24", gold: "未处理", defect: "", delivery: "2026-06-30", status: "贴线中", note: "", logs: ["创建作品"] }
-    ];
+
+    const seed = (() => {
+      const now = Date.now();
+      const iso = ts => new Date(ts).toISOString();
+      const day = n => new Date(now + n * 86400000).toISOString().slice(0, 10);
+      const h = n => iso(now - n * 3600000);
+      return [
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "木胎首饰盒", theme: "缠枝莲", line: "中线",
+          source: "客户寄回·陈记古玩", receiver: "王秀兰",
+          inspection: null, retest: null,
+          blocked: [],
+          progress: 0, dryDate: "", gold: "未处理", defect: "", delivery: day(7),
+          status: "待体检", note: "客户称是三十年前的旧胎，要求补线后保持哑光",
+          occupied: false, pickedUp: false, queuedAt: null,
+          history: [{ at: iso(now - 5 * 3600000), type: "登记", text: "入坊登记：来源「客户寄回·陈记古玩」；接收人 王秀兰；体检值待补" }],
+          logs: []
+        },
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "竹胎笔筒", theme: "云雷纹", line: "中线",
+          source: "门店收回", receiver: "王秀兰",
+          inspection: { moisture: 9.8, wallDiff: 0.8, cracks: 1, at: h(26), by: "王秀兰" },
+          retest: null, blocked: [],
+          progress: 0, dryDate: "", gold: "未处理", defect: "", delivery: day(10),
+          status: "待领料", note: "",
+          occupied: false, pickedUp: false, queuedAt: h(26),
+          history: [
+            { at: h(26), type: "登记", text: "入坊登记：来源「门店收回」；接收人 王秀兰" },
+            { at: h(26), type: "初检", text: "初检合格：含水率 9.8%、壁厚差 0.8mm、裂纹 1 条，进入待领队列" }
+          ],
+          logs: []
+        },
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "脱胎捧盒", theme: "海水江崖", line: "混合线",
+          source: "客户寄回·林宅", receiver: "王秀兰",
+          inspection: { moisture: 15.6, wallDiff: 2.6, cracks: 4, at: h(72), by: "王秀兰" },
+          retest: { moisture: 13.2, wallDiff: 1.3, cracks: 2, at: h(20), by: "李桂珍" },
+          blocked: ["含水率", "壁厚差"],
+          progress: 0, dryDate: "", gold: "未处理", defect: "", delivery: day(14),
+          status: "养护区", note: "整体返潮，养护房阴干中",
+          occupied: false, pickedUp: false, queuedAt: null,
+          history: [
+            { at: h(72), type: "登记", text: "入坊登记：来源「客户寄回·林宅」；接收人 王秀兰" },
+            { at: h(72), type: "初检", text: "初检超限：含水率 15.6%、壁厚差 2.6mm、裂纹 4 条，转入养护区，不占贴线材料与工位" },
+            { at: h(20), type: "复测", text: "养护复测（复测人 李桂珍）：含水率 13.2% 仍超限、壁厚差 1.3mm 达标、裂纹 2 条，继续养护" }
+          ],
+          logs: []
+        },
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "木胎香盒", theme: "折枝梅", line: "细线",
+          source: "库存旧胎", receiver: "王秀兰",
+          inspection: { moisture: 10.5, wallDiff: 0.6, cracks: 0, at: h(50), by: "王秀兰" },
+          retest: null, blocked: [],
+          progress: 55, dryDate: "", gold: "未处理", defect: "", delivery: day(4),
+          status: "贴线中", note: "边线保持低浮雕感",
+          occupied: true, pickedUp: true, pickedAt: h(44), queuedAt: null,
+          history: [
+            { at: h(50), type: "登记", text: "入坊登记：来源「库存旧胎」；接收人 王秀兰" },
+            { at: h(50), type: "初检", text: "初检合格：含水率 10.5%、壁厚差 0.6mm、裂纹 0 条，进入待领队列" },
+            { at: h(44), type: "领料", text: "领料开工：占用贴线材料 1 份、工位 1 个，贴线进度从 0% 起计" },
+            { at: h(8), type: "进度", text: "贴线进度更新为 55%" }
+          ],
+          logs: []
+        },
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "脱胎盘", theme: "缠枝莲", line: "混合线",
+          source: "客户自送", receiver: "李桂珍",
+          inspection: { moisture: 8.7, wallDiff: 0.5, cracks: 0, at: h(120), by: "李桂珍" },
+          retest: null, blocked: [],
+          progress: 90, dryDate: today, gold: "试扫粉", defect: "左侧枝干翘线", delivery: day(2),
+          status: "待阴干", note: "客户要求金粉偏暗",
+          occupied: false, pickedUp: true, pickedAt: h(110), queuedAt: null,
+          history: [
+            { at: h(120), type: "登记", text: "入坊登记：来源「客户自送」；接收人 李桂珍" },
+            { at: h(120), type: "初检", text: "初检合格：含水率 8.7%、壁厚差 0.5mm、裂纹 0 条，进入待领队列" },
+            { at: h(110), type: "领料", text: "领料开工：占用贴线材料 1 份、工位 1 个" },
+            { at: h(30), type: "状态", text: "贴线完成（90%），释放材料与工位，转入待阴干" },
+            { at: h(28), type: "缺陷", text: "缺陷：左侧枝干翘线" }
+          ],
+          logs: []
+        },
+        {
+          id: crypto.randomUUID(), schema: 2,
+          base: "朱漆匣", theme: "云凤纹", line: "粗线",
+          source: "门店收回", receiver: "李桂珍",
+          inspection: { moisture: 11.2, wallDiff: 1.1, cracks: 0, at: h(200), by: "李桂珍" },
+          retest: null, blocked: [],
+          progress: 95, dryDate: day(-2), gold: "已上金粉", defect: "", delivery: day(1),
+          status: "上金粉", note: "",
+          occupied: false, pickedUp: true, pickedAt: h(190), queuedAt: null,
+          history: [
+            { at: h(200), type: "登记", text: "入坊登记：来源「门店收回」；接收人 李桂珍" },
+            { at: h(200), type: "初检", text: "初检合格：含水率 11.2%、壁厚差 1.1mm、裂纹 0 条，进入待领队列" },
+            { at: h(190), type: "领料", text: "领料开工：占用贴线材料 1 份、工位 1 个" },
+            { at: h(60), type: "状态", text: "转入待阴干，释放材料与工位" },
+            { at: h(10), type: "状态", text: "转入上金粉" }
+          ],
+          logs: []
+        }
+      ];
+    })();
+
+    let limits = JSON.parse(localStorage.getItem(limitsKey) || "null") || { moisture: 12, wallDiff: 1.5 };
     let works = JSON.parse(localStorage.getItem(storageKey) || "null") || seed;
     let activeId = null;
+    let measureTarget = null; // { id, mode }
 
     const form = document.querySelector("#workForm");
     const board = document.querySelector("#board");
     const statusFilter = document.querySelector("#statusFilter");
     const themeFilter = document.querySelector("#themeFilter");
     const sortMode = document.querySelector("#sortMode");
-    const dialog = document.querySelector("#detailDialog");
+    const detailDialog = document.querySelector("#detailDialog");
+    const measureDialog = document.querySelector("#measureDialog");
+    const measureForm = document.querySelector("#measureForm");
 
-    form.dryDate.value = today;
-    form.delivery.value = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+    form.delivery.value = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
     statusFilter.innerHTML = `<option value="">全部状态</option>` + statuses.map(s => `<option>${s}</option>`).join("");
+    document.querySelector("#limMoisture").value = limits.moisture;
+    document.querySelector("#limWall").value = limits.wallDiff;
+    renderGateHint();
+
+    // 兼容旧版数据（无体检字段的历史作品视为早已合格领料）
+    function migrate(w) {
+      if (w.schema === 2) return w;
+      const occupied = w.status === "贴线中";
+      return {
+        ...w, schema: 2,
+        source: w.source || "历史登记", receiver: "原登记师傅",
+        inspection: { moisture: 10.0, wallDiff: 0.8, cracks: 0, at: new Date().toISOString(), by: "原登记师傅" },
+        retest: null, blocked: [],
+        occupied, pickedUp: true, pickedAt: occupied ? new Date().toISOString() : null, queuedAt: null,
+        history: (w.logs || ["创建作品"]).map(t => ({ at: new Date().toISOString(), type: "履历", text: t })),
+        logs: w.logs || []
+      };
+    }
+    works = works.map(migrate);
 
     function save() {
       localStorage.setItem(storageKey, JSON.stringify(works));
+    }
+    function saveLimits() {
+      localStorage.setItem(limitsKey, JSON.stringify(limits));
+    }
+    function now() { return new Date().toISOString(); }
+    function fmt(iso) { return String(iso || "").replace("T", " ").slice(0, 16); }
+    function pushHistory(w, type, text, snapshot) {
+      w.history.push({ at: now(), type, text, ...(snapshot ? { snapshot } : {}) });
+      w.logs.push(`${new Date().toLocaleString()} ${text}`);
+    }
+
+    function renderGateHint() {
+      document.querySelector("#gateHint").innerHTML =
+        `两项判超限：含水率 &gt; <b>${limits.moisture}%</b> 或 壁厚差 &gt; <b>${limits.wallDiff}mm</b> → 进养护区，不占贴线材料和工位；合格 → 待领料排队。体检值留空则先进待体检。`;
+    }
+
+    // 只看两项：含水率、壁厚差
+    function evalBlocked(m) {
+      const blocked = [];
+      if (m.moisture > limits.moisture) blocked.push("含水率");
+      if (m.wallDiff > limits.wallDiff) blocked.push("壁厚差");
+      return blocked;
+    }
+
+    function measureBadges(m) {
+      const blocked = evalBlocked(m);
+      return `<span class="badge ${blocked.includes("含水率") ? "bad" : "ok"}">含水 ${m.moisture}%</span>`
+        + `<span class="badge ${blocked.includes("壁厚差") ? "bad" : "ok"}">壁厚差 ${m.wallDiff}mm</span>`
+        + `<span class="badge">裂纹 ${m.cracks} 条</span>`;
+    }
+
+    function occupiedWorks() {
+      return works.filter(w => w.status === "贴线中" && w.occupied);
     }
 
     function filtered() {
@@ -169,92 +415,362 @@
     }
 
     function updateStatus(id, status) {
-      const work = works.find(w => w.id === id);
-      work.status = status;
-      if (status === "待阴干") work.dryDate = new Date().toISOString().slice(0, 10);
-      if (status === "上金粉") work.gold = "已上金粉";
-      if (status === "待交付") work.progress = 100;
-      work.logs.push(`${new Date().toLocaleString()} 更新为 ${status}`);
+      const w = works.find(x => x.id === id);
+      const from = w.status;
+      w.status = status;
+      if (status === "待阴干") {
+        w.dryDate = today;
+        if (from === "贴线中" && w.occupied) {
+          w.occupied = false; // 离开贴线工位即释放材料与工位
+          pushHistory(w, "状态", `贴线完成（${w.progress}%），释放贴线材料与工位，转入待阴干`);
+        } else {
+          pushHistory(w, "状态", `更新为 ${status}`);
+        }
+      } else {
+        if (status === "上金粉") w.gold = "已上金粉";
+        if (status === "待交付") w.progress = 100;
+        pushHistory(w, "状态", `更新为 ${status}`);
+      }
+      save();
+      render();
+    }
+
+    function setProgress(id) {
+      const w = works.find(x => x.id === id);
+      const v = prompt("贴线进度（0-100%）", w.progress);
+      if (v === null) return;
+      const n = Math.max(0, Math.min(100, Number(v) || 0));
+      w.progress = n;
+      pushHistory(w, "进度", `贴线进度更新为 ${n}%`);
       save();
       render();
     }
 
     function recordDefect(id, text) {
-      const work = works.find(w => w.id === id);
+      const w = works.find(x => x.id === id);
       const value = text || prompt("输入断线/翘线位置");
       if (!value) return;
-      work.defect = work.defect ? `${work.defect}; ${value}` : value;
-      work.logs.push(`${new Date().toLocaleString()} 缺陷：${value}`);
+      w.defect = w.defect ? `${w.defect}; ${value}` : value;
+      pushHistory(w, "缺陷", `缺陷：${value}`);
+      save();
+      render();
+    }
+
+    // ---- 体检 / 更正 / 复测 共用弹窗 ----
+    function openMeasure(id, mode) {
+      const w = works.find(x => x.id === id);
+      measureTarget = { id, mode };
+      const warn = document.querySelector("#measureWarn");
+      const reasonWrap = document.querySelector("#reasonWrap");
+      const confirmWrap = document.querySelector("#confirmInvalidate").parentElement;
+      const operatorText = document.querySelector("#operatorText");
+      document.querySelector("#measureTitle").textContent =
+        mode === "inspect" ? (w.inspection ? "重新体检" : "入坊体检")
+        : mode === "retest" ? "养护复测" : "领料后体检值更正";
+      document.querySelector("#measureSubmit").textContent =
+        mode === "inspect" ? "提交体检" : mode === "retest" ? "提交复测" : "确认更正并退检";
+      reasonWrap.style.display = mode === "correct" ? "grid" : "none";
+      confirmWrap.style.display = mode === "correct" ? "grid" : "none";
+      document.querySelector("#confirmInvalidate").checked = false;
+      operatorText.textContent = mode === "retest" ? "复测人" : mode === "correct" ? "更正操作人" : "接收/体检人";
+
+      if (mode === "correct") {
+        warn.className = "warnbox";
+        warn.innerHTML = `领料后更正体检值：<b>贴线进度（${w.progress}%）与已占用的材料/工位立即失效</b>，作品退回「待体检」，旧值与原进度保留在履历，需重新体检合格后再排队领料。`;
+      } else if (mode === "retest") {
+        warn.className = "infobox";
+        warn.innerHTML = `须由<b>另一人</b>复测：复测人不能与初检接收人「${w.receiver}」为同一人；含水率与壁厚差<b>两项都达标</b>，作品才能重新进入待领队列。`;
+      } else {
+        warn.className = "infobox";
+        warn.innerHTML = `按当前标准判定：含水率 ≤ ${limits.moisture}%、壁厚差 ≤ ${limits.wallDiff}mm 为合格。`;
+      }
+
+      const base = mode === "retest" ? { moisture: "", wallDiff: "", cracks: "" } : (w.retest || w.inspection || { moisture: "", wallDiff: "", cracks: "" });
+      measureForm.moisture.value = base.moisture ?? "";
+      measureForm.wallDiff.value = base.wallDiff ?? "";
+      measureForm.cracks.value = base.cracks ?? 0;
+      measureForm.operator.value = mode === "retest" ? "" : (w.inspection?.by || w.receiver || "");
+      measureForm.reason.value = "";
+      measureDialog.showModal();
+    }
+
+    measureForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const { id, mode } = measureTarget;
+      const w = works.find(x => x.id === id);
+      const moisture = Number(measureForm.moisture.value);
+      const wallDiff = Number(measureForm.wallDiff.value);
+      const cracks = Number(measureForm.cracks.value) || 0;
+      const operator = measureForm.operator.value.trim();
+
+      if (!(moisture >= 0) || !(wallDiff >= 0) || !operator) { alert("请填妥两项测量值和操作人"); return; }
+      if (mode === "retest" && operator === w.receiver) {
+        alert(`复测人必须是另一人，不能与初检接收人「${w.receiver}」相同`);
+        return;
+      }
+      if (mode === "correct" && !document.querySelector("#confirmInvalidate").checked) {
+        alert("请勾选确认：更正将使进度与占用失效并退回待体检");
+        return;
+      }
+
+      const m = { moisture, wallDiff, cracks, at: now(), by: operator };
+
+      if (mode === "correct") {
+        // 领料依据可能是复测值；以当前生效体检值（复测优先）为更正对象
+        const oldSource = w.retest ? { ...w.retest, via: "复测" } : { ...w.inspection, via: "初检" };
+        const old = oldSource;
+        const oldProgress = w.progress;
+        const reason = measureForm.reason.value.trim();
+        // 旧值与原进度留履历；占用与进度随即失效，退回待体检
+        pushHistory(w, "更正",
+          `体检值更正（操作人 ${operator}${reason ? "；理由：" + reason : ""}；依据为${old.via}值）：含水率 ${old.moisture}%→${moisture}%，壁厚差 ${old.wallDiff}mm→${wallDiff}mm，裂纹 ${old.cracks}→${cracks} 条`,
+          { kind: "旧体检值", via: old.via, moisture: old.moisture, wallDiff: old.wallDiff, cracks: old.cracks, by: old.by, at: old.at });
+        pushHistory(w, "失效",
+          `领料后体检值更正：贴线进度 ${oldProgress}% 与材料/工位占用立即失效，作品退回待体检；旧值与原进度留存履历`,
+          { kind: "原贴线进度", progress: oldProgress, pickedAt: w.pickedAt });
+        w.inspection = m;
+        w.retest = null;
+        w.blocked = [];
+        w.progress = 0;
+        w.occupied = false;
+        w.queuedAt = null;
+        w.status = "待体检";
+      } else if (mode === "retest") {
+        const blocked = evalBlocked(m);
+        w.retest = m;
+        if (blocked.length === 0) {
+          w.blocked = [];
+          w.queuedAt = now();
+          w.status = "待领料";
+          pushHistory(w, "复测",
+            `养护复测（复测人 ${operator}）：含水率 ${moisture}%、壁厚差 ${wallDiff}mm、裂纹 ${cracks} 条，两项均达标，重新排队（待领料）`);
+        } else {
+          w.blocked = blocked;
+          pushHistory(w, "复测",
+            `养护复测（复测人 ${operator}）：含水率 ${moisture}%、壁厚差 ${wallDiff}mm、裂纹 ${cracks} 条；卡点：${blocked.join("、")}，继续养护`);
+        }
+      } else {
+        const blocked = evalBlocked(m);
+        const redoing = w.history.some(e => e.type === "失效");
+        w.inspection = m;
+        w.blocked = blocked;
+        if (blocked.length === 0) {
+          w.status = "待领料";
+          w.queuedAt = now();
+          pushHistory(w, redoing ? "复检" : "初检",
+            `${redoing ? "重新体检" : "初检"}（${operator}）：含水率 ${moisture}%、壁厚差 ${wallDiff}mm、裂纹 ${cracks} 条，两项合格，${redoing ? "重新排队（待领料）" : "进入待领队列"}`);
+        } else {
+          w.status = "养护区";
+          w.queuedAt = null;
+          pushHistory(w, redoing ? "复检" : "初检",
+            `${redoing ? "重新体检" : "初检"}（${operator}）：含水率 ${moisture}%、壁厚差 ${wallDiff}mm、裂纹 ${cracks} 条；卡点：${blocked.join("、")}，转入养护区，不占贴线材料与工位`);
+        }
+      }
+      measureDialog.close();
+      save();
+      render();
+    });
+    document.querySelector("#measureCancel").addEventListener("click", () => measureDialog.close());
+
+    function pickup(id) {
+      const w = works.find(x => x.id === id);
+      const latest = w.retest || w.inspection;
+      if (latest && evalBlocked(latest).length) {
+        alert(`按当前限值，该作品 ${evalBlocked(latest).join("、")} 超限，请先复测或更正`);
+        return;
+      }
+      const used = occupiedWorks().length;
+      if (used >= MATERIAL_TOTAL || used >= STATION_TOTAL) {
+        alert("贴线材料或工位已满，暂不能领料");
+        return;
+      }
+      w.status = "贴线中";
+      w.occupied = true;
+      w.pickedUp = true;
+      w.pickedAt = now();
+      w.queuedAt = null;
+      if (typeof w.progress !== "number") w.progress = 0;
+      pushHistory(w, "领料", "领料开工：占用贴线材料 1 份、工位 1 个，贴线进度从 0% 起计");
       save();
       render();
     }
 
     function showDetail(id) {
       activeId = id;
-      const w = works.find(item => item.id === id);
+      const w = works.find(x => x.id === id);
+      const insp = w.inspection ? `
+        <b>${w.retest ? "初检值（留存）" : "当前体检值"}</b>（${fmt(w.inspection.at)} · ${w.inspection.by}）：<br>
+        <span class="badges">${measureBadges(w.inspection)}</span>` : "体检值：待补检（待体检）";
+      const retest = w.retest ? `
+        <b>当前生效值·养护复测</b>（${fmt(w.retest.at)} · 复测人 ${w.retest.by}）：<br>
+        <span class="badges">${measureBadges(w.retest)}</span>` : "复测：无";
+      const hist = w.history.slice().reverse().map(e =>
+        `<li><b>[${e.type}]</b> ${fmt(e.at)} · ${e.text}` +
+        (e.snapshot ? `<div class="snap">履历留存｜${e.snapshot.kind}：${
+          e.snapshot.kind === "旧体检值"
+            ? `（${e.snapshot.via || "初检"}值 · ${e.snapshot.by} · ${fmt(e.snapshot.at)}）含水率 ${e.snapshot.moisture}%、壁厚差 ${e.snapshot.wallDiff}mm、裂纹 ${e.snapshot.cracks} 条`
+            : `贴线进度 ${e.snapshot.progress}%（领料于 ${fmt(e.snapshot.pickedAt)}）`
+        }</div>` : "") + `</li>`).join("");
       document.querySelector("#detailTitle").textContent = `${w.theme} · ${w.base}`;
       document.querySelector("#detailContent").innerHTML = `
-        胎体材质：${w.base}<br>线条粗细：${w.line}<br>贴线进度：${w.progress}%<br>
-        阴干日期：${w.dryDate}<br>金粉状态：${w.gold}<br>缺陷位置：${w.defect || "无"}<br>
-        交付日期：${w.delivery}<br>当前状态：${w.status}<br>备注：${w.note || "无"}<br>
-        流转记录：${w.logs.join(" / ")}
-      `;
+        来源：${w.source}　接收人：${w.receiver}<br>
+        胎体材质：${w.base}　线条：${w.line}　当前状态：${w.status}<br>
+        ${insp}<br>
+        ${retest}<br>
+        ${w.blocked.length ? `卡点：<span class="badges"><span class="badge bad">${w.blocked.join("</span><span class=\"badge bad\">")}</span></span><br>` : ""}
+        贴线进度：${w.progress}%　资源占用：${w.occupied ? "材料 1 份 + 工位 1 个" : "未占用"}<br>
+        阴干日期：${w.dryDate || "—"}　金粉：${w.gold}　缺陷：${w.defect || "无"}<br>
+        交付日期：${w.delivery}　备注：${w.note || "无"}<br>
+        <b>履历</b>：<ul class="hist">${hist}</ul>`;
       document.querySelector("#defectInput").value = "";
-      dialog.showModal();
+      detailDialog.showModal();
     }
 
     function renderSummaries() {
-      const todayDry = works.filter(w => w.dryDate <= today && w.status === "待阴干");
+      const todayDry = works.filter(w => w.dryDate && w.dryDate <= today && w.status === "待阴干");
+      const curing = works.filter(w => w.status === "养护区");
       const defects = works.filter(w => w.defect);
-      const delivery = [...works].sort((a, b) => a.delivery.localeCompare(b.delivery)).slice(0, 4);
-      document.querySelector("#todayDry").innerHTML = todayDry.length ? todayDry.map(w => `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.base} · ${w.dryDate}</div></div>`).join("") : `<div class="empty">暂无</div>`;
-      document.querySelector("#defectList").innerHTML = defects.length ? defects.map(w => `<div class="item overdue" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.defect}</div></div>`).join("") : `<div class="empty">暂无</div>`;
-      document.querySelector("#deliveryList").innerHTML = delivery.map(w => `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.delivery} · ${w.status}</div></div>`).join("");
+      const delivery = [...works].filter(w => w.delivery).sort((a, b) => a.delivery.localeCompare(b.delivery)).slice(0, 4);
+      document.querySelector("#todayDry").innerHTML = todayDry.length ? todayDry.map(w =>
+        `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.base} · ${w.dryDate}</div></div>`).join("") : `<div class="empty">暂无</div>`;
+      document.querySelector("#cureList").innerHTML = curing.length ? curing.map(w => {
+        const latest = w.retest || w.inspection;
+        const blocked = latest ? evalBlocked(latest) : w.blocked;
+        return `<div class="item st-cure" onclick="showDetail('${w.id}')"><b>${w.theme}</b>`
+          + `<div class="badges">${blocked.map(b => `<span class="badge bad">卡点·${b}</span>`).join("")}</div>`
+          + `<div class="meta">${w.source}</div></div>`;
+      }).join("") : `<div class="empty">暂无</div>`;
+      document.querySelector("#defectList").innerHTML = defects.length ? defects.map(w =>
+        `<div class="item overdue" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.defect}</div></div>`).join("") : `<div class="empty">暂无</div>`;
+      document.querySelector("#deliveryList").innerHTML = delivery.map(w =>
+        `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.delivery} · ${w.status}</div></div>`).join("");
+    }
+
+    function cardBody(w) {
+      const head = `<div class="meta">${w.base} · ${w.line}<br>来源：${w.source}<br>接收：${w.receiver} · 交付：${w.delivery}</div>`;
+      if (w.status === "待体检") {
+        return head + (w.inspection
+          ? `<div class="warnbox" style="margin-top:6px;">领料后更正，待重新确认体检值</div><div class="badges">${measureBadges(w.inspection)}</div>`
+          : `<div class="meta" style="margin-top:6px;">体检值待补</div>`);
+      }
+      if (w.status === "待领料") {
+        const m = w.retest || w.inspection;
+        return head + `<div class="badges">${measureBadges(m)}</div>`
+          + `<div class="meta">${w.retest ? "凭复测合格" : "初检合格"} · 排队于 ${fmt(w.queuedAt)}</div>`;
+      }
+      if (w.status === "养护区") {
+        const latest = w.retest || w.inspection;
+        const blocked = latest ? evalBlocked(latest) : w.blocked;
+        const tags = blocked.length ? `<div class="badges">${blocked.map(b => `<span class="badge bad">卡点·${b}</span>`).join("")}</div>` : "";
+        const rows = `<div class="meas">
+          <div class="row"><span class="badge solid">初检</span><span class="meta">${fmt(w.inspection?.at)} · ${w.inspection?.by}</span></div>
+          <div class="badges">${w.inspection ? measureBadges(w.inspection) : ""}</div>
+          <div class="row"><span class="badge solid">复测</span><span class="meta">${w.retest ? fmt(w.retest.at) + " · " + w.retest.by : "尚未复测"}</span></div>
+          ${w.retest ? `<div class="badges">${measureBadges(w.retest)}</div>` : ""}
+        </div>`;
+        return head + tags + rows + (w.defect ? `<div class="meta">缺陷：${w.defect}</div>` : "");
+      }
+      return head
+        + `<div class="meta" style="margin-top:4px;">进度 ${w.progress}% · ${w.occupied ? `<span class="badge ok">占材料+工位</span>` : "未占资源"}<br>`
+        + `阴干 ${w.dryDate || "—"} · 金粉：${w.gold}<br>${w.defect ? "缺陷：" + w.defect : "缺陷：无"}</div>`;
+    }
+
+    function cardActions(w) {
+      let btns = "";
+      if (w.status === "待体检") btns += `<button class="violet" onclick="openMeasure('${w.id}','inspect')">${w.inspection ? "重新体检" : "体检登记"}</button>`;
+      if (w.status === "待领料") {
+        const used = occupiedWorks().length;
+        const full = used >= MATERIAL_TOTAL || used >= STATION_TOTAL;
+        btns += full ? `<button disabled>材料/工位已满</button>` : `<button onclick="pickup('${w.id}')">领料开工</button>`;
+      }
+      if (w.status === "养护区") btns += `<button class="violet" onclick="openMeasure('${w.id}','retest')">他人复测</button>`;
+      if (w.status === "贴线中") {
+        btns += `<button class="warn" onclick="openMeasure('${w.id}','correct')">更正体检值</button>`
+          + `<button class="secondary" onclick="setProgress('${w.id}')">改进度</button>`
+          + `<button onclick="updateStatus('${w.id}','待阴干')">完工待阴干</button>`;
+      }
+      if (w.status === "待阴干") btns += `<button onclick="updateStatus('${w.id}','上金粉')">上金粉</button>`;
+      if (w.status === "上金粉") btns += `<button onclick="updateStatus('${w.id}','待交付')">待交付</button>`;
+      btns += `<button class="warn" onclick="recordDefect('${w.id}')">记缺陷</button>`;
+      return `<div class="actions" onclick="event.stopPropagation()">${btns}</div>`;
     }
 
     function renderBoard() {
       const list = filtered();
       board.innerHTML = statuses.map(status => {
         const cards = list.filter(w => w.status === status);
+        const cls = { "待体检": "st-inspect", "待领料": "st-pickup", "养护区": "st-cure" }[status] || "";
         return `<section class="col">
           <h3><span>${status}</span><span>${cards.length}</span></h3>
-          ${cards.length ? cards.map(w => `<article class="item ${w.defect ? "overdue" : ""}" onclick="showDetail('${w.id}')">
-            <b>${w.theme}</b>
-            <div class="meta">${w.base} · ${w.line}<br>进度 ${w.progress}% · 阴干 ${w.dryDate}<br>金粉：${w.gold} · 交付：${w.delivery}<br>${w.defect ? "缺陷：" + w.defect : "缺陷：无"}</div>
-            <div class="actions" onclick="event.stopPropagation()">
-              ${statuses.map(s => `<button class="${s === status ? "secondary" : ""}" onclick="updateStatus('${w.id}', '${s}')">${s}</button>`).join("")}
-              <button class="warn" onclick="recordDefect('${w.id}')">记缺陷</button>
-            </div>
+          ${cards.length ? cards.map(w => `<article class="item ${cls} ${w.defect ? "overdue" : ""}" onclick="showDetail('${w.id}')">
+            <b>${w.theme}</b>${cardBody(w)}${cardActions(w)}
           </article>`).join("") : `<div class="empty">暂无作品</div>`}
         </section>`;
       }).join("");
     }
 
+    function renderPickup() {
+      const used = occupiedWorks().length;
+      const queue = works.filter(w => w.status === "待领料")
+        .sort((a, b) => (a.queuedAt || "").localeCompare(b.queuedAt || ""));
+      document.querySelector("#queueList").innerHTML = queue.length ? queue.map(w => `
+        <div class="item st-pickup queue-item" onclick="showDetail('${w.id}')">
+          <div><b>${w.theme}</b><div class="meta">${w.base} · ${w.source}</div><div class="badges">${measureBadges(w.retest || w.inspection)}</div><div class="meta">排队 ${fmt(w.queuedAt)} · ${w.retest ? "复测合格" : "初检合格"}</div></div>
+          <div class="actions" style="margin:0;" onclick="event.stopPropagation()">
+            <button style="flex:0 0 auto;" onclick="pickup('${w.id}')">领料</button>
+          </div>
+        </div>`).join("") : `<div class="empty">暂无合格待领作品（超限作品在养护区，不占材料和工位）</div>`;
+
+      document.querySelector("#matCapText").textContent = `贴线材料：${used} / ${MATERIAL_TOTAL} 份`;
+      document.querySelector("#stCapText").textContent = `贴线工位：${used} / ${STATION_TOTAL} 个`;
+      const matBar = document.querySelector("#matBar");
+      const stBar = document.querySelector("#stBar");
+      matBar.style.width = (used / MATERIAL_TOTAL * 100) + "%";
+      stBar.style.width = (used / STATION_TOTAL * 100) + "%";
+      matBar.className = used >= MATERIAL_TOTAL ? "full" : "";
+      stBar.className = used >= STATION_TOTAL ? "full" : "";
+    }
+
     function render() {
       renderSummaries();
+      renderPickup();
       renderBoard();
     }
 
     form.addEventListener("submit", event => {
       event.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
-      works.unshift({
-        id: crypto.randomUUID(),
-        base: data.base,
-        theme: data.theme,
-        line: data.line,
-        progress: Number(data.progress),
-        dryDate: data.dryDate,
-        gold: data.gold,
-        defect: data.defect,
-        delivery: data.delivery,
-        status: data.status,
-        note: data.note,
-        logs: [`${new Date().toLocaleString()} 创建作品`]
-      });
+      const d = Object.fromEntries(new FormData(form).entries());
+      if ((d.moisture === "") !== (d.wallDiff === "")) {
+        alert("含水率与壁厚差须同时填写；暂不齐全可先留空，作品进入待体检后补检");
+        return;
+      }
+      const hasMeas = d.moisture !== "" && d.wallDiff !== "";
+      const inspection = hasMeas
+        ? { moisture: Number(d.moisture), wallDiff: Number(d.wallDiff), cracks: Number(d.cracks) || 0, at: now(), by: d.receiver }
+        : null;
+      const blocked = inspection ? evalBlocked(inspection) : [];
+      const w = {
+        id: crypto.randomUUID(), schema: 2,
+        base: d.base, theme: d.theme, line: d.line,
+        source: d.source, receiver: d.receiver,
+        inspection, retest: null, blocked,
+        progress: 0, dryDate: "", gold: "未处理", defect: "",
+        delivery: d.delivery, note: d.note,
+        status: inspection ? (blocked.length ? "养护区" : "待领料") : "待体检",
+        occupied: false, pickedUp: false, pickedAt: null,
+        queuedAt: inspection && !blocked.length ? now() : null,
+        history: [], logs: []
+      };
+      pushHistory(w, "登记", `入坊登记：来源「${d.source}」；接收人 ${d.receiver}${inspection ? "" : "；体检值待补"}`);
+      if (inspection) {
+        pushHistory(w, "初检",
+          blocked.length
+            ? `初检超限：含水率 ${inspection.moisture}%、壁厚差 ${inspection.wallDiff}mm、裂纹 ${inspection.cracks} 条；卡点：${blocked.join("、")}，转入养护区，不占贴线材料与工位`
+            : `初检合格：含水率 ${inspection.moisture}%、壁厚差 ${inspection.wallDiff}mm、裂纹 ${inspection.cracks} 条，进入待领队列`);
+      }
+      works.unshift(w);
       form.reset();
-      form.dryDate.value = today;
-      form.delivery.value = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+      form.delivery.value = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
       save();
       render();
     });
@@ -263,13 +779,23 @@
       recordDefect(activeId, document.querySelector("#defectInput").value.trim());
       showDetail(activeId);
     });
-    document.querySelector("#closeDialog").addEventListener("click", () => dialog.close());
+    document.querySelector("#closeDialog").addEventListener("click", () => detailDialog.close());
     document.querySelector("#clearFilters").addEventListener("click", () => {
       themeFilter.value = "";
       statusFilter.value = "";
       render();
     });
     [statusFilter, themeFilter, sortMode].forEach(el => el.addEventListener("input", render));
+    document.querySelector("#limMoisture").addEventListener("change", e => {
+      limits.moisture = Math.max(0, Number(e.target.value) || 0);
+      e.target.value = limits.moisture;
+      saveLimits(); renderGateHint(); render();
+    });
+    document.querySelector("#limWall").addEventListener("change", e => {
+      limits.wallDiff = Math.max(0, Number(e.target.value) || 0);
+      e.target.value = limits.wallDiff;
+      saveLimits(); renderGateHint(); render();
+    });
     document.querySelector("#exportBtn").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify(works, null, 2)], { type: "application/json" });
       const link = document.createElement("a");
@@ -280,8 +806,11 @@
     });
 
     window.updateStatus = updateStatus;
+    window.setProgress = setProgress;
     window.recordDefect = recordDefect;
     window.showDetail = showDetail;
+    window.openMeasure = openMeasure;
+    window.pickup = pickup;
     save();
     render();
   </script>
