@@ -32,17 +32,20 @@
     button.violet { background: var(--violet); }
     label { display: grid; gap: 5px; font-size: 12px; color: var(--muted); }
     .top { display: grid; grid-template-columns: 360px 1fr; gap: 18px; align-items: start; }
+    .side { display: grid; gap: 18px; }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
     .panel h2 { margin: 0 0 12px; font-size: 17px; }
     form { display: grid; gap: 10px; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .toolbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
-    .lists { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .lists { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
     .mini { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fbfdfb; min-height: 118px; }
     .mini h3 { margin: 0 0 8px; font-size: 14px; }
     .item { border: 1px solid #d7e0dc; border-left: 4px solid var(--teal); background: #fff; border-radius: 7px; padding: 9px; margin-bottom: 8px; cursor: pointer; }
     .item.overdue { border-left-color: var(--red); }
-    .board { display: grid; grid-template-columns: repeat(4, minmax(185px, 1fr)); gap: 12px; overflow-x: auto; }
+    .flag { color: var(--red); font-weight: 600; }
+    .tag { display: inline-block; background: #e7efec; color: var(--teal); border-radius: 4px; padding: 1px 6px; font-size: 12px; }
+    .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr); gap: 12px; overflow-x: auto; }
     .col { background: #f9fbf9; border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 320px; }
     .col h3 { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 15px; }
     .actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
@@ -63,35 +66,59 @@
   <header>
     <div>
       <h1>小型漆线雕工坊管理</h1>
-      <div class="sub">贴线、阴干、上金粉、待交付的作品流转与缺陷追踪</div>
+      <div class="sub">旧胎入坊体检、养护复测、领料占用与贴线、阴干、上金粉、待交付的流转追踪</div>
     </div>
     <button id="exportBtn" class="secondary">导出 JSON</button>
   </header>
 
   <main>
     <section class="top">
-      <form id="workForm" class="panel">
-        <h2>新增作品</h2>
-        <div class="grid2">
-          <label>胎体材质<input name="base" required placeholder="脱胎漆器"></label>
-          <label>纹样主题<input name="theme" required placeholder="缠枝莲"></label>
-        </div>
-        <div class="grid2">
-          <label>线条粗细<select name="line"><option>细线</option><option>中线</option><option>粗线</option><option>混合线</option></select></label>
-          <label>贴线进度<input name="progress" type="number" min="0" max="100" value="25"></label>
-        </div>
-        <div class="grid2">
-          <label>阴干日期<input name="dryDate" type="date" required></label>
-          <label>交付日期<input name="delivery" type="date" required></label>
-        </div>
-        <div class="grid2">
-          <label>金粉处理状态<select name="gold"><option>未处理</option><option>试扫粉</option><option>已上金粉</option></select></label>
-          <label>当前状态<select name="status"><option>贴线中</option><option>待阴干</option><option>上金粉</option><option>待交付</option></select></label>
-        </div>
-        <label>缺陷位置<input name="defect" placeholder="右下花瓣断线"></label>
-        <label>备注<textarea name="note" placeholder="客户偏好、修补记录"></textarea></label>
-        <button type="submit">加入工坊</button>
-      </form>
+      <div class="side">
+        <form id="intakeForm" class="panel">
+          <h2>入坊体检与领料台</h2>
+          <div class="meta">旧胎入坊先体检：含水率 ≤ 12%、壁厚差 ≤ 1.5mm 为达标；超限进养护区，暂不占贴线材料与工位。</div>
+          <div class="grid2">
+            <label>胎体材质<input name="base" required placeholder="客户寄回旧胎"></label>
+            <label>纹样主题<input name="theme" required placeholder="缠枝莲"></label>
+          </div>
+          <div class="grid2">
+            <label>来源<input name="source" required placeholder="客户寄回 / 批次号"></label>
+            <label>接收人<input name="receiver" required placeholder="登记并初测"></label>
+          </div>
+          <div class="grid2">
+            <label>含水率 %<input name="moisture" type="number" step="0.1" min="0" required placeholder="11.5"></label>
+            <label>壁厚差 mm<input name="wallDiff" type="number" step="0.1" min="0" required placeholder="1.2"></label>
+          </div>
+          <div class="grid2">
+            <label>裂纹数<input name="cracks" type="number" min="0" value="0" required></label>
+            <label>交付日期<input name="delivery" type="date" required></label>
+          </div>
+          <button type="submit">登记入坊</button>
+        </form>
+
+        <form id="workForm" class="panel">
+          <h2>新增作品</h2>
+          <div class="grid2">
+            <label>胎体材质<input name="base" required placeholder="脱胎漆器"></label>
+            <label>纹样主题<input name="theme" required placeholder="缠枝莲"></label>
+          </div>
+          <div class="grid2">
+            <label>线条粗细<select name="line"><option>细线</option><option>中线</option><option>粗线</option><option>混合线</option></select></label>
+            <label>贴线进度<input name="progress" type="number" min="0" max="100" value="25"></label>
+          </div>
+          <div class="grid2">
+            <label>阴干日期<input name="dryDate" type="date" required></label>
+            <label>交付日期<input name="delivery" type="date" required></label>
+          </div>
+          <div class="grid2">
+            <label>金粉处理状态<select name="gold"><option>未处理</option><option>试扫粉</option><option>已上金粉</option></select></label>
+            <label>当前状态<select name="status"><option>贴线中</option><option>待阴干</option><option>上金粉</option><option>待交付</option></select></label>
+          </div>
+          <label>缺陷位置<input name="defect" placeholder="右下花瓣断线"></label>
+          <label>备注<textarea name="note" placeholder="客户偏好、修补记录"></textarea></label>
+          <button type="submit">加入工坊</button>
+        </form>
+      </div>
 
       <section class="panel">
         <h2>今日与风险</h2>
@@ -99,6 +126,10 @@
           <div class="mini">
             <h3>今日待阴干</h3>
             <div id="todayDry"></div>
+          </div>
+          <div class="mini">
+            <h3>养护区卡点</h3>
+            <div id="careList"></div>
           </div>
           <div class="mini">
             <h3>缺陷作品</h3>
@@ -134,31 +165,73 @@
     </div>
   </dialog>
 
+  <dialog id="measureDialog">
+    <form id="measureForm" class="dialog-body">
+      <h2 id="measureTitle">体检</h2>
+      <div id="measureHint" class="meta"></div>
+      <label>测量人<input id="mPerson" required placeholder="姓名"></label>
+      <div class="grid2">
+        <label>含水率 %<input id="mMoisture" type="number" step="0.1" min="0" required></label>
+        <label>壁厚差 mm<input id="mWall" type="number" step="0.1" min="0" required></label>
+      </div>
+      <label id="mCracksWrap">裂纹数<input id="mCracks" type="number" min="0" value="0"></label>
+      <div class="actions">
+        <button type="submit">提交</button>
+        <button type="button" id="measureCancel" class="secondary">取消</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
-    const statuses = ["贴线中", "待阴干", "上金粉", "待交付"];
+    const prodStatuses = ["贴线中", "待阴干", "上金粉", "待交付"];
+    const statuses = ["待体检", "养护区", "待领料", ...prodStatuses];
+    const LIMITS = { moisture: 12, wallDiff: 1.5 };
     const storageKey = "zfl42Works";
     const today = new Date().toISOString().slice(0, 10);
+    const now = () => new Date().toLocaleString();
     const seed = [
       { id: crypto.randomUUID(), base: "木胎香盒", theme: "海水江崖", line: "细线", progress: 70, dryDate: today, gold: "未处理", defect: "", delivery: "2026-06-26", status: "待阴干", note: "边线需保持低浮雕感", logs: ["创建作品"] },
       { id: crypto.randomUUID(), base: "脱胎盘", theme: "折枝梅", line: "混合线", progress: 95, dryDate: "2026-06-20", gold: "试扫粉", defect: "左侧枝干翘线", delivery: "2026-06-23", status: "上金粉", note: "客户要求金粉偏暗", logs: ["创建作品", "记录翘线"] },
-      { id: crypto.randomUUID(), base: "竹胎笔筒", theme: "云雷纹", line: "中线", progress: 40, dryDate: "2026-06-24", gold: "未处理", defect: "", delivery: "2026-06-30", status: "贴线中", note: "", logs: ["创建作品"] }
+      { id: crypto.randomUUID(), base: "竹胎笔筒", theme: "云雷纹", line: "中线", progress: 40, dryDate: "2026-06-24", gold: "未处理", defect: "", delivery: "2026-06-30", status: "贴线中", note: "", logs: ["创建作品"] },
+      { id: crypto.randomUUID(), base: "客户寄回旧瓷瓶", theme: "缠枝莲", line: "中线", progress: 0, dryDate: today, gold: "未处理", defect: "", delivery: "2026-07-08", status: "养护区", note: "", source: "客户寄回", intake: { moisture: 15.6, wallDiff: 2.3, cracks: 4, receiver: "阿珍", date: now() }, recheck: null, occupied: false, materials: null, logs: [`${now()} 入坊登记（来源：客户寄回，接收人：阿珍）初测 含水率15.6% 壁厚差2.3mm 裂纹4处 → 超限入养护区：含水率 15.6%＞12%；壁厚差 2.3mm＞1.5mm`] },
+      { id: crypto.randomUUID(), base: "客户寄回旧木碗", theme: "折枝山茶", line: "中线", progress: 0, dryDate: today, gold: "未处理", defect: "", delivery: "2026-07-10", status: "待领料", note: "", source: "客户寄回", intake: { moisture: 10.8, wallDiff: 0.9, cracks: 1, receiver: "老林", date: now() }, recheck: null, occupied: false, materials: null, logs: [`${now()} 入坊登记（来源：客户寄回，接收人：老林）初测 含水率10.8% 壁厚差0.9mm 裂纹1处 → 达标，待领料`] }
     ];
     let works = JSON.parse(localStorage.getItem(storageKey) || "null") || seed;
     let activeId = null;
+    let measureMode = null;
+    let measureId = null;
 
     const form = document.querySelector("#workForm");
+    const intakeForm = document.querySelector("#intakeForm");
     const board = document.querySelector("#board");
     const statusFilter = document.querySelector("#statusFilter");
     const themeFilter = document.querySelector("#themeFilter");
     const sortMode = document.querySelector("#sortMode");
     const dialog = document.querySelector("#detailDialog");
+    const measureDialog = document.querySelector("#measureDialog");
+    const measureForm = document.querySelector("#measureForm");
+    const measureTitle = document.querySelector("#measureTitle");
+    const measureHint = document.querySelector("#measureHint");
+    const mPerson = document.querySelector("#mPerson");
+    const mMoisture = document.querySelector("#mMoisture");
+    const mWall = document.querySelector("#mWall");
+    const mCracks = document.querySelector("#mCracks");
+    const mCracksWrap = document.querySelector("#mCracksWrap");
 
     form.dryDate.value = today;
     form.delivery.value = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+    intakeForm.delivery.value = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
     statusFilter.innerHTML = `<option value="">全部状态</option>` + statuses.map(s => `<option>${s}</option>`).join("");
 
     function save() {
       localStorage.setItem(storageKey, JSON.stringify(works));
+    }
+
+    function overLimitIssues(moisture, wallDiff) {
+      const issues = [];
+      if (moisture > LIMITS.moisture) issues.push(`含水率 ${moisture}%＞${LIMITS.moisture}%`);
+      if (wallDiff > LIMITS.wallDiff) issues.push(`壁厚差 ${wallDiff}mm＞${LIMITS.wallDiff}mm`);
+      return issues;
     }
 
     function filtered() {
@@ -174,7 +247,7 @@
       if (status === "待阴干") work.dryDate = new Date().toISOString().slice(0, 10);
       if (status === "上金粉") work.gold = "已上金粉";
       if (status === "待交付") work.progress = 100;
-      work.logs.push(`${new Date().toLocaleString()} 更新为 ${status}`);
+      work.logs.push(`${now()} 更新为 ${status}`);
       save();
       render();
     }
@@ -184,19 +257,64 @@
       const value = text || prompt("输入断线/翘线位置");
       if (!value) return;
       work.defect = work.defect ? `${work.defect}; ${value}` : value;
-      work.logs.push(`${new Date().toLocaleString()} 缺陷：${value}`);
+      work.logs.push(`${now()} 缺陷：${value}`);
       save();
       render();
+    }
+
+    function claimMaterials(id) {
+      const work = works.find(w => w.id === id);
+      const by = prompt("领料人姓名");
+      if (!by || !by.trim()) return;
+      work.occupied = true;
+      work.materials = { by: by.trim(), at: now() };
+      work.status = "贴线中";
+      work.progress = 0;
+      work.logs.push(`${now()} ${by.trim()} 领料，占用贴线材料与工位，开始贴线`);
+      save();
+      render();
+    }
+
+    function openMeasure(id, mode) {
+      const work = works.find(w => w.id === id);
+      measureMode = mode;
+      measureId = id;
+      const titles = { inspect: "重新体检", recheck: "养护后复测", correct: "更正体检值" };
+      measureTitle.textContent = `${titles[mode]} · ${work.theme}`;
+      if (mode === "recheck") {
+        measureHint.textContent = `初测（接收人 ${work.intake.receiver}）：含水率 ${work.intake.moisture}% · 壁厚差 ${work.intake.wallDiff}mm。复测须由另一人进行，含水率与壁厚差两项达标才重新排队。`;
+      } else if (mode === "correct") {
+        measureHint.textContent = `当前体检值：含水率 ${work.intake.moisture}% · 壁厚差 ${work.intake.wallDiff}mm · 裂纹 ${work.intake.cracks} 处。更正后贴线进度与材料/工位占用立即失效，作品退回待体检，旧值与原进度保留在履历。`;
+      } else {
+        measureHint.textContent = `重新体检：含水率 ≤ ${LIMITS.moisture}%、壁厚差 ≤ ${LIMITS.wallDiff}mm 达标，超限进养护区。`;
+      }
+      mCracksWrap.style.display = mode === "recheck" ? "none" : "";
+      mCracks.required = mode !== "recheck";
+      measureForm.reset();
+      if (mode === "correct") {
+        mMoisture.value = work.intake.moisture;
+        mWall.value = work.intake.wallDiff;
+        mCracks.value = work.intake.cracks;
+      } else {
+        mCracks.value = work.intake && work.intake.cracks || 0;
+      }
+      measureDialog.showModal();
     }
 
     function showDetail(id) {
       activeId = id;
       const w = works.find(item => item.id === id);
+      const intakeHtml = w.intake ? `
+        来源：${w.source || "—"}<br>接收人：${w.intake.receiver}<br>
+        初测：含水率 ${w.intake.moisture}% · 壁厚差 ${w.intake.wallDiff}mm · 裂纹 ${w.intake.cracks} 处（${w.intake.date}）<br>
+        ${w.recheck ? `复测：含水率 ${w.recheck.moisture}% · 壁厚差 ${w.recheck.wallDiff}mm（${w.recheck.inspector}，${w.recheck.date}）<br>` : ""}
+        材料/工位：${w.occupied ? `已占用（${w.materials.by} 领料，${w.materials.at}）` : "未占用"}<br>
+      ` : "";
       document.querySelector("#detailTitle").textContent = `${w.theme} · ${w.base}`;
       document.querySelector("#detailContent").innerHTML = `
         胎体材质：${w.base}<br>线条粗细：${w.line}<br>贴线进度：${w.progress}%<br>
         阴干日期：${w.dryDate}<br>金粉状态：${w.gold}<br>缺陷位置：${w.defect || "无"}<br>
-        交付日期：${w.delivery}<br>当前状态：${w.status}<br>备注：${w.note || "无"}<br>
+        交付日期：${w.delivery}<br>当前状态：${w.status}<br>${intakeHtml}备注：${w.note || "无"}<br>
         流转记录：${w.logs.join(" / ")}
       `;
       document.querySelector("#defectInput").value = "";
@@ -205,11 +323,48 @@
 
     function renderSummaries() {
       const todayDry = works.filter(w => w.dryDate <= today && w.status === "待阴干");
+      const care = works.filter(w => w.status === "养护区" && w.intake);
+      const occupiedCount = works.filter(w => w.occupied).length;
       const defects = works.filter(w => w.defect);
       const delivery = [...works].sort((a, b) => a.delivery.localeCompare(b.delivery)).slice(0, 4);
       document.querySelector("#todayDry").innerHTML = todayDry.length ? todayDry.map(w => `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.base} · ${w.dryDate}</div></div>`).join("") : `<div class="empty">暂无</div>`;
+      document.querySelector("#careList").innerHTML = `<div class="meta" style="margin-bottom:6px">材料/工位占用：${occupiedCount} 件</div>` + (care.length ? care.map(w => {
+        const m = w.recheck || w.intake;
+        const issues = overLimitIssues(m.moisture, m.wallDiff);
+        return `<div class="item overdue" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">卡点：${issues.join("；") || "—"}</div></div>`;
+      }).join("") : `<div class="empty">暂无</div>`);
       document.querySelector("#defectList").innerHTML = defects.length ? defects.map(w => `<div class="item overdue" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.defect}</div></div>`).join("") : `<div class="empty">暂无</div>`;
       document.querySelector("#deliveryList").innerHTML = delivery.map(w => `<div class="item" onclick="showDetail('${w.id}')"><b>${w.theme}</b><div class="meta">${w.delivery} · ${w.status}</div></div>`).join("");
+    }
+
+    function measureHtml(w) {
+      const i = w.intake;
+      let html = `<br>初测：含水率 ${i.moisture}% · 壁厚差 ${i.wallDiff}mm · 裂纹 ${i.cracks} 处`;
+      if (w.recheck) html += `<br>复测（${w.recheck.inspector}）：含水率 ${w.recheck.moisture}% · 壁厚差 ${w.recheck.wallDiff}mm`;
+      const m = w.recheck || i;
+      const issues = overLimitIssues(m.moisture, m.wallDiff);
+      if (issues.length) html += `<br><span class="flag">卡点：${issues.join("；")}</span>`;
+      return html;
+    }
+
+    function cardMeta(w) {
+      if (["待体检", "养护区", "待领料"].includes(w.status) && w.intake) {
+        return `${w.base} · 来源：${w.source || "—"}<br>接收人：${w.intake.receiver} · 交付：${w.delivery}${measureHtml(w)}`
+          + (w.status === "待体检" ? `<br><span class="flag">体检值已更正，待重新体检</span>` : "")
+          + (w.status === "待领料" ? `<br><span class="tag">未占材料/工位</span>` : "");
+      }
+      return `${w.base} · ${w.line}<br>进度 ${w.progress}% · 阴干 ${w.dryDate}<br>金粉：${w.gold} · 交付：${w.delivery}<br>${w.defect ? "缺陷：" + w.defect : "缺陷：无"}`
+        + (w.occupied ? `<br><span class="tag">已领料：${w.materials.by}</span>` : "")
+        + (w.intake ? measureHtml(w) : "");
+    }
+
+    function cardActions(w) {
+      if (w.status === "待体检") return `<button class="violet" onclick="openMeasure('${w.id}', 'inspect')">重新体检</button>`;
+      if (w.status === "养护区") return `<button class="violet" onclick="openMeasure('${w.id}', 'recheck')">养护后复测</button>`;
+      if (w.status === "待领料") return `<button onclick="claimMaterials('${w.id}')">领料</button>`;
+      const buttons = prodStatuses.map(s => `<button class="${s === w.status ? "secondary" : ""}" onclick="updateStatus('${w.id}', '${s}')">${s}</button>`).join("");
+      const correct = w.intake && w.occupied ? `<button class="danger" onclick="openMeasure('${w.id}', 'correct')">更正体检值</button>` : "";
+      return buttons + `<button class="warn" onclick="recordDefect('${w.id}')">记缺陷</button>` + correct;
     }
 
     function renderBoard() {
@@ -218,13 +373,10 @@
         const cards = list.filter(w => w.status === status);
         return `<section class="col">
           <h3><span>${status}</span><span>${cards.length}</span></h3>
-          ${cards.length ? cards.map(w => `<article class="item ${w.defect ? "overdue" : ""}" onclick="showDetail('${w.id}')">
+          ${cards.length ? cards.map(w => `<article class="item ${w.defect || (w.status === "养护区") ? "overdue" : ""}" onclick="showDetail('${w.id}')">
             <b>${w.theme}</b>
-            <div class="meta">${w.base} · ${w.line}<br>进度 ${w.progress}% · 阴干 ${w.dryDate}<br>金粉：${w.gold} · 交付：${w.delivery}<br>${w.defect ? "缺陷：" + w.defect : "缺陷：无"}</div>
-            <div class="actions" onclick="event.stopPropagation()">
-              ${statuses.map(s => `<button class="${s === status ? "secondary" : ""}" onclick="updateStatus('${w.id}', '${s}')">${s}</button>`).join("")}
-              <button class="warn" onclick="recordDefect('${w.id}')">记缺陷</button>
-            </div>
+            <div class="meta">${cardMeta(w)}</div>
+            <div class="actions" onclick="event.stopPropagation()">${cardActions(w)}</div>
           </article>`).join("") : `<div class="empty">暂无作品</div>`}
         </section>`;
       }).join("");
@@ -234,6 +386,81 @@
       renderSummaries();
       renderBoard();
     }
+
+    intakeForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(intakeForm).entries());
+      const moisture = Number(data.moisture);
+      const wallDiff = Number(data.wallDiff);
+      const cracks = Number(data.cracks);
+      const issues = overLimitIssues(moisture, wallDiff);
+      works.unshift({
+        id: crypto.randomUUID(),
+        base: data.base,
+        theme: data.theme,
+        line: "中线",
+        progress: 0,
+        dryDate: today,
+        gold: "未处理",
+        defect: "",
+        delivery: data.delivery,
+        status: issues.length ? "养护区" : "待领料",
+        note: "",
+        source: data.source,
+        intake: { moisture, wallDiff, cracks, receiver: data.receiver.trim(), date: now() },
+        recheck: null,
+        occupied: false,
+        materials: null,
+        logs: [`${now()} 入坊登记（来源：${data.source}，接收人：${data.receiver.trim()}）初测 含水率${moisture}% 壁厚差${wallDiff}mm 裂纹${cracks}处 → ${issues.length ? "超限入养护区：" + issues.join("；") : "达标，待领料"}`]
+      });
+      intakeForm.reset();
+      intakeForm.delivery.value = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+      save();
+      render();
+    });
+
+    measureForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const work = works.find(w => w.id === measureId);
+      const person = mPerson.value.trim();
+      const moisture = Number(mMoisture.value);
+      const wallDiff = Number(mWall.value);
+      if (!person) return;
+      if (measureMode === "recheck") {
+        if (person === work.intake.receiver) {
+          alert(`复测须由另一人进行（初测接收人：${work.intake.receiver}）`);
+          return;
+        }
+        work.recheck = { moisture, wallDiff, inspector: person, date: now() };
+        const issues = overLimitIssues(moisture, wallDiff);
+        if (issues.length) {
+          work.logs.push(`${now()} ${person} 复测 含水率${moisture}% 壁厚差${wallDiff}mm，仍超限：${issues.join("；")}，留在养护区`);
+        } else {
+          work.status = "待领料";
+          work.logs.push(`${now()} ${person} 复测 含水率${moisture}% 壁厚差${wallDiff}mm，两项达标，重新排队待领料`);
+        }
+      } else if (measureMode === "inspect") {
+        const cracks = Number(mCracks.value);
+        work.intake = { moisture, wallDiff, cracks, receiver: person, date: now() };
+        work.recheck = null;
+        const issues = overLimitIssues(moisture, wallDiff);
+        work.status = issues.length ? "养护区" : "待领料";
+        work.logs.push(`${now()} ${person} 重新体检 含水率${moisture}% 壁厚差${wallDiff}mm 裂纹${cracks}处 → ${issues.length ? "超限入养护区：" + issues.join("；") : "达标，待领料"}`);
+      } else if (measureMode === "correct") {
+        const cracks = Number(mCracks.value);
+        const old = work.intake;
+        work.logs.push(`${now()} ${person} 更正体检值：旧值 含水率${old.moisture}% 壁厚差${old.wallDiff}mm 裂纹${old.cracks}处（接收人${old.receiver}）→ 新值 含水率${moisture}% 壁厚差${wallDiff}mm 裂纹${cracks}处；原贴线进度 ${work.progress}%、材料与工位占用失效，退回待体检`);
+        work.intake = { moisture, wallDiff, cracks, receiver: old.receiver, date: now() };
+        work.recheck = null;
+        work.progress = 0;
+        work.occupied = false;
+        work.materials = null;
+        work.status = "待体检";
+      }
+      save();
+      measureDialog.close();
+      render();
+    });
 
     form.addEventListener("submit", event => {
       event.preventDefault();
@@ -250,7 +477,7 @@
         delivery: data.delivery,
         status: data.status,
         note: data.note,
-        logs: [`${new Date().toLocaleString()} 创建作品`]
+        logs: [`${now()} 创建作品`]
       });
       form.reset();
       form.dryDate.value = today;
@@ -264,6 +491,7 @@
       showDetail(activeId);
     });
     document.querySelector("#closeDialog").addEventListener("click", () => dialog.close());
+    document.querySelector("#measureCancel").addEventListener("click", () => measureDialog.close());
     document.querySelector("#clearFilters").addEventListener("click", () => {
       themeFilter.value = "";
       statusFilter.value = "";
@@ -282,6 +510,8 @@
     window.updateStatus = updateStatus;
     window.recordDefect = recordDefect;
     window.showDetail = showDetail;
+    window.claimMaterials = claimMaterials;
+    window.openMeasure = openMeasure;
     save();
     render();
   </script>
